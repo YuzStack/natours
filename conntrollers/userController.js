@@ -1,4 +1,6 @@
-import { users } from '../app.js';
+import fs from 'fs';
+
+const users = JSON.parse(fs.readFileSync('./dev-data/data/users.json'));
 
 export const getAllUsers = (req, res) => {
   res.status(200).json({

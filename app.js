@@ -22,9 +22,6 @@ app.use((req, res, next) => {
   next();
 });
 
-export const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json'));
-export const users = JSON.parse(fs.readFileSync('./dev-data/data/users.json'));
-
 // 2. ROUTE DECLARATIONS
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
