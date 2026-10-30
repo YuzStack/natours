@@ -1,15 +1,33 @@
 import fs from 'fs';
 import express from 'express';
+import morgan from 'morgan';
 
 const app = express(); // Create an express app
 
+// 1. MIDDLEWARES
+app.use(morgan('dev'));
 app.use(express.json()); // Middleware: Parses all json data coming from the client
+
+// Our own custum middleware
+app.use((req, res, next) => {
+  console.log('Hello from the custom middleware (1) 👋');
+  next(); // Always remember to add this, else the request-response cycle will stuck in this middleware
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json'));
 
+// 2. ROUTE HANDLERS
 const getAllTours = (req, res) => {
+  console.log(req.requestTime);
+
   res.status(200).json({
     status: 'success', // sucess | fail | error
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
@@ -62,15 +80,11 @@ const deleteTour = (req, res) => {
   res.status(204).json({ status: 'success', data: null });
 };
 
-// app.get('/api/v1/tours', getAllTours);
-// app.post('/api/v1/tours', createTour);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
+// 3. ROUTES
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
+// 4. START SERVER
 const PORT = 3_000;
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);
