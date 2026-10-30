@@ -7,9 +7,11 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch server.js",
+    "build": "NODE_ENV=production node --watch server.js"
   },
   "dependencies": {
+    "dotenv": "^18.0.9",
     "express": "^4.16.4",
     "morgan": "^1.12.1"
   }
