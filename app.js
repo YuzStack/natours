@@ -2,7 +2,7 @@ import fs from 'fs';
 import express from 'express';
 import morgan from 'morgan';
 
-const app = express(); // Create an express app
+const app = express(); // Create express app
 
 // 1. MIDDLEWARES
 // 1.1 Third-Party Middlewares
@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json'));
 const users = JSON.parse(fs.readFileSync('./dev-data/data/users.json'));
 
-// 2. ROUTE HANDLERS
+// 2. ROUTE HANDLERS/CONTROLLERS
 // 2.1 Tours
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
@@ -125,14 +125,20 @@ const deleteUser = (req, res) => {
   });
 };
 
-// 3. ROUTES
+// 3. ROUTE DECLARATIONS
 // 3.1 Tours
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
+const tourRouter = express.Router();
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+app.use('/api/v1/tours', tourRouter);
 
 // 3.1 Users
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
-app.route('/api/v1/users/:id').get(getUser).patch(updateUser).delete(deleteUser);
+const userRouter = express.Router();
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/users', userRouter);
 
 // 4. START SERVER
 const PORT = 3_000;
