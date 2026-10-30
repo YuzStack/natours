@@ -10,6 +10,7 @@ export const app = express(); // Create express app
 // 1.1 Third-Party Middlewares
 app.use(morgan('dev'));
 app.use(express.json()); // Middleware: Parses all json data coming from the client
+app.use(express.static('./public'));
 
 // 1.2 Our Own Custum Middlewares
 app.use((req, res, next) => {
