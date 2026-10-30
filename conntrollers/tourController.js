@@ -9,6 +9,14 @@ export const checkId = (req, res, next, val) => {
   next();
 };
 
+export const checkBody = (req, res, next) => {
+  const { name, price } = req.body;
+  if (!name || !price)
+    return res.status(400).json({ status: 'fail', message: 'The name or price is missing!' });
+
+  next();
+};
+
 export const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success', // sucess | fail | error
