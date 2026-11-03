@@ -3,11 +3,21 @@ import { Tour } from '../models/tourModel.js';
 export const getAllTours = async (req, res) => {
   try {
     // BUILD QUERY
+    // 1. Filtering
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    const query = Tour.find(queryObj);
+    // 2. Advanced Filtering
+
+    // { difficulty: 'easy', duration: { $gte: 5 } } // How the query is meant to
+    // { difficulty: 'easy', duration: { gte: '5' } } // How the query is likely is
+    // gte, gt, lte, lt // Interested operators
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt\b)/g, (match) => `$${match}`);
+
+    const query = Tour.find(JSON.parse(queryStr));
 
     // EXECUTE QUERY
     const tours = await query;
