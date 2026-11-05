@@ -66,6 +66,7 @@ const tourSchema = new Schema(
   }
 );
 
+// VIRTUAL PROPERTY
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
@@ -76,15 +77,14 @@ tourSchema.pre('save', function () {
 });
 
 // QUERY MIDDLWARE
-// tourSchema.pre('find', function () {
 tourSchema.pre(/^find/, function () {
   this.find({ secretTour: { $ne: true } });
-  this.start = Date.now();
 });
 
-// tourSchema.post(/^find/, function (docs, next) {
-//   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
-//   next();
-// });
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function () {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // console.log(this.pipeline());
+});
 
 export const Tour = mongoose.model('Tour', tourSchema);
