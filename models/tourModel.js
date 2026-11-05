@@ -55,6 +55,10 @@ const tourSchema = new Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -66,17 +70,20 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
-// Document Middleware: Runs before .save() and .create(), but not on .insertMany()
+// DOCUMENT MIDDLWARE: Runs before .save() and .create(), but not on .insertMany()
 tourSchema.pre('save', function () {
   this.slug = slugify(this.name, { lower: true });
 });
 
-// tourSchema.pre('save', function () {
-//   console.log('Will save document...');
-// });
+// QUERY MIDDLWARE
+// tourSchema.pre('find', function () {
+tourSchema.pre(/^find/, function () {
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+});
 
-// tourSchema.post('save', function (doc, next) {
-//   console.log(doc);
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
 //   next();
 // });
 
