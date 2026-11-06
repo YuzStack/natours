@@ -22,7 +22,7 @@ export const getAllTours = async (req, res) => {
 
     // SEND RESPONSE
     res.status(200).json({
-      status: 'success', // sucess | fail | error
+      status: 'success', // sucess | fail (400) | error (500)
       results: tours.length,
       data: {
         tours,
