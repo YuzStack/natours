@@ -13,3 +13,11 @@ app.use(express.json()); // Middleware: Parses all json data coming from the cli
 // 2. ROUTE DECLARATIONS
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+
+// Handling any other undefined routes
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
