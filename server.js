@@ -1,20 +1,24 @@
 import './env.js';
 import { app } from './app.js';
-import connectDB from './config/database.js';
+import mongoose from 'mongoose';
 
-const startServer = async () => {
-  try {
-    await connectDB();
+const port = process.env.PORT || 6_000;
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}...`);
+});
 
-    app.on('error', (error) => {
-      console.log('ERROR', error);
-      throw error;
-    });
+mongoose.connect(process.env.MONGODB_URI).then((connectionInstance) =>
+  console.log(`\n MongoDB connection succesful!
+      ${connectionInstance.connection.host}`)
+);
 
-    app.listen(process.env.PORT || 6_000);
-  } catch (error) {
-    console.log('MongoDB connection failed', error);
-  }
-};
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
 
-startServer();
+  // server.close clears all pending requests
+  server.close(() => {
+    // process.exit(1) "kills" the server
+    process.exit(1);
+  });
+});
