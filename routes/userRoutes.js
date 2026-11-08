@@ -6,11 +6,12 @@ import {
   getUser,
   updateUser,
 } from '../conntrollers/userController.js';
-import { signup } from '../conntrollers/authController.js';
+import { login, signup } from '../conntrollers/authController.js';
 
 const userRouter = express.Router();
 
 userRouter.post('/signup', signup);
+userRouter.post('/login', login);
 
 userRouter.route('/').get(getAllUsers).post(createUser);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);

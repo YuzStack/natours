@@ -1,17 +1,20 @@
-import fs from 'fs';
+import { User } from '../models/userModel.js';
+import { catchAsync } from '../utils/catchAsync.js';
 
-const users = JSON.parse(fs.readFileSync('./dev-data/data/users.json'));
+export const getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
 
-export const getAllUsers = (req, res) => {
   res.status(200).json({
-    status: 'success',
+    status: 'success', // sucess | fail (400) | error (500)
     results: users.length,
-    data: { users },
+    data: {
+      users,
+    },
   });
-};
+});
 
-export const getUser = (req, res) => {
-  const user = users.find((user) => user._id === req.params.id);
+export const getUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
 
   if (!user) return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
 
@@ -23,21 +26,21 @@ export const getUser = (req, res) => {
   });
 };
 
-export const createUser = (req, res) => {
+export const createUser = async (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined!',
   });
 };
 
-export const updateUser = (req, res) => {
+export const updateUser = async (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined!',
   });
 };
 
-export const deleteUser = (req, res) => {
+export const deleteUser = async (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined!',
