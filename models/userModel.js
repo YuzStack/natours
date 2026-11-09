@@ -32,10 +32,11 @@ const userSchema = new Schema({
       message: 'Passwords are not the same',
     },
   },
+  passwordChangedAt: Date,
 });
 
 userSchema.pre('save', async function () {
-  // Only run this function if password was actually modified
+  // Only run this function if password was modified
   if (!this.isModified('password')) return;
 
   // Hash the password with the CPU cost (saltOrRounds) of 11
@@ -47,6 +48,17 @@ userSchema.pre('save', async function () {
 
 userSchema.methods.comparePassword = async function (providedPassword, userPassword) {
   return await bcrypt.compare(providedPassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    // Convert the document's passwordChangedAt date to a timestamp in seconds
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < changedTimestamp; // i.e., has the password changed since the token was issued?
+  }
+
+  // False means the password has NOT changed
+  return false;
 };
 
 export const User = mongoose.model('User', userSchema);

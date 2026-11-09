@@ -1,7 +1,8 @@
+import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import jwt from 'jsonwebtoken';
 
 const signToken = (userID) => {
   return jwt.sign({ id: userID }, process.env.JWT_SECRET, {
@@ -12,13 +13,10 @@ const signToken = (userID) => {
 export const signup = catchAsync(async (req, res, next) => {
   // const user = await User.create(req.body); // This has a major flaw: Any user can just creates an 'admin' profile using the API
 
-  const user = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-  });
+  const { name, email, password, passwordConfirm } = req.body;
+  const user = await User.create({ name, email, password, passwordConfirm });
 
+  user.password = undefined; // Removes the password property from the user object that will be sent to the client
   const token = signToken(user._id);
 
   res.status(201).json({
@@ -53,4 +51,31 @@ export const login = catchAsync(async (req, res, next) => {
     status: 'success',
     token,
   });
+});
+
+export const protect = catchAsync(async (req, res, next) => {
+  // 1. Try getting the token and check if it's there
+  let token;
+  const { authorization } = req.headers;
+  if (authorization && authorization.startsWith('Bearer')) {
+    token = authorization.split(' ').at(1);
+  }
+
+  if (!token) return next(new AppError('You are not logged in! Please login to get access.', 401));
+
+  // 2. Verify the token
+  const decodedPayload = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // 3. Check if the user (with the token) still exists
+  const user = await User.findById(decodedPayload.id);
+  if (!user) return next(new AppError('The user with this token no longer exist!', 401));
+
+  // 4. Check if the user has changed password since the token was issued
+  const hasChanged = user.changedPasswordAfter(decodedPayload.iat);
+  if (hasChanged)
+    return next(new AppError('User recently changed password! Please log in again.', 401));
+
+  // 5. Grant access to the protected route
+  req.user = user;
+  next();
 });
