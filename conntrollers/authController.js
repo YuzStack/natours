@@ -11,10 +11,10 @@ const signToken = (userID) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  // const user = await User.create(req.body); // This has a major flaw: Any user can just creates an 'admin' profile using the API
+  const user = await User.create(req.body); // This has a major flaw: Any user can just creates an 'admin' profile using the API
 
-  const { name, email, password, passwordConfirm } = req.body;
-  const user = await User.create({ name, email, password, passwordConfirm });
+  // const { name, email, password, passwordConfirm } = req.body;
+  // const user = await User.create({ name, email, password, passwordConfirm });
 
   user.password = undefined; // Removes the password property from the user object that will be sent to the client
   const token = signToken(user._id);
@@ -79,3 +79,14 @@ export const protect = catchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    console.log(roles);
+    // roles is an array, e.g., ['admin', 'lead-guide']
+    if (!roles.includes(req.user.role))
+      return next(new AppError('You do not have persmision to perform this action', 403));
+
+    next();
+  };
+};
