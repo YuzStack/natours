@@ -6,7 +6,14 @@ import {
   getUser,
   updateUser,
 } from '../conntrollers/userController.js';
-import { forgotPassword, login, resetPassword, signup } from '../conntrollers/authController.js';
+import {
+  forgotPassword,
+  login,
+  protect,
+  resetPassword,
+  signup,
+  updatePassword,
+} from '../conntrollers/authController.js';
 
 const userRouter = express.Router();
 
@@ -15,6 +22,7 @@ userRouter.post('/login', login);
 
 userRouter.post('/forgot-password', forgotPassword);
 userRouter.patch('/reset-password/:token', resetPassword);
+userRouter.patch('/change-password', protect, updatePassword);
 
 userRouter.route('/').get(getAllUsers).post(createUser);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
