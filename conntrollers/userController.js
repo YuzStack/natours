@@ -11,6 +11,39 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+export const updateCurUser = catchAsync(async (req, res, next) => {
+  // 1. Create error if the user POSTs password data
+  if (req.body.password || req.body.passwordConfirm)
+    return next(
+      new AppError('This route is not for password updates. Please use /change-my-password', 400)
+    );
+
+  // 2. Filter out unwanted fields that are not allowed to be updated
+  const filteredBody = filterObj(req.body, 'name', 'email');
+
+  // 3. Update the user document
+  const user = await User.findByIdAndUpdate(req.user._id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
+export const deleteCurUser = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user._id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
+
 export const getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
 
@@ -35,30 +68,6 @@ export const getUser = async (req, res) => {
     },
   });
 };
-
-export const updateMe = catchAsync(async (req, res, next) => {
-  // 1. Create error if the user POSTs password data
-  if (req.body.password || req.body.passwordConfirm)
-    return next(
-      new AppError('This route is not for password updates. Please use /change-my-password', 400)
-    );
-
-  // 2. Filter out unwanted fields that are not allowed to be updated
-  const filteredBody = filterObj(req.body, 'name', 'email');
-
-  // 3. Update the user document
-  const user = await User.findByIdAndUpdate(req.user._id, filteredBody, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
-});
 
 export const createUser = async (req, res) => {
   res.status(500).json({

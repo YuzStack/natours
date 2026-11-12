@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 import slugify from 'slugify';
-import validator from 'validator';
 
 const tourSchema = new Schema(
   {
@@ -11,7 +10,6 @@ const tourSchema = new Schema(
       trim: true,
       maxlength: [40, 'A tour name must have less or equal than 40 characters'],
       minlength: [10, 'A tour name must have more or equal than 10 characters'],
-      // validate: [validator.isAlpha, 'Tour name must only contain characters'],
     },
     slug: String,
     duration: {
@@ -91,11 +89,13 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // DOCUMENT MIDDLWARE: Runs before .save() and .create(), but not on .insertMany()
 tourSchema.pre('save', function () {
+  // "this" points to the current document
   this.slug = slugify(this.name, { lower: true });
 });
 
 // QUERY MIDDLWARE
 tourSchema.pre(/^find/, function () {
+  // "this" points to the current query
   this.find({ secretTour: { $ne: true } });
 });
 
