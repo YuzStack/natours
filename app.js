@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
+import hpp from 'hpp';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import AppError from './utils/appError.js';
@@ -17,6 +18,19 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev')); // HTTP requ
 app.use(express.json({ limit: '10kb' })); // Body parser: Reads data from body into req.body
 app.use(ExpressMongoSanitize()); // Data sanitization against NoSQL query injection
 app.use(xss()); // Data sanitization against XSS
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 app.use(express.static('./public')); // Serve static files
 
 const limiter = rateLimit({

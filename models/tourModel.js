@@ -74,6 +74,7 @@ const tourSchema = new Schema(
     secretTour: {
       type: Boolean,
       default: false,
+      select: false,
     },
   },
   {
