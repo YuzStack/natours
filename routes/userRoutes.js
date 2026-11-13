@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import {
   createUser,
   deleteCurUser,
@@ -17,7 +17,7 @@ import {
   updatePassword,
 } from '../conntrollers/authController.js';
 
-const userRouter = express.Router();
+const userRouter = Router();
 
 userRouter.post('/signup', signup);
 userRouter.post('/login', login);
@@ -29,7 +29,7 @@ userRouter.patch('/change-my-password', protect, updatePassword);
 userRouter.patch('/update-my-account', protect, updateCurUser);
 userRouter.delete('/close-my-account', protect, deleteCurUser);
 
-userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/').post(createUser).get(getAllUsers);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 export default userRouter;
