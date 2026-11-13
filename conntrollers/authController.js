@@ -6,8 +6,8 @@ import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { sendEmail } from '../utils/email.js';
 
-const signToken = (userID) => {
-  return jwt.sign({ id: userID }, process.env.JWT_SECRET, {
+const signToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
