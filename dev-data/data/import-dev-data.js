@@ -1,24 +1,17 @@
-import fs from 'fs';
 import '../../env.js';
+import mongoose from 'mongoose';
+import fs from 'fs';
 import { Tour } from '../../models/tourModel.js';
-import connectDB from '../../config/database.js';
 
-const startServer = async () => {
-  try {
-    await connectDB();
+const port = process.env.PORT || 6_000;
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}...`);
+});
 
-    app.on('error', (error) => {
-      console.log('ERROR', error);
-      throw error;
-    });
-
-    app.listen(process.env.PORT || 6_000);
-  } catch (error) {
-    console.log('MongoDB connection failed', error);
-  }
-};
-
-startServer();
+mongoose.connect(process.env.MONGODB_URI).then((connectionInstance) =>
+  console.log(`\n MongoDB connection succesful!
+      ${connectionInstance.connection.host}`)
+);
 
 // READ JSON FILE
 const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json', 'utf-8'));
