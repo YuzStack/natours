@@ -9,6 +9,7 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './conntrollers/errorController.js';
+import reviewRouter from './routes/reviewRoutes.js';
 
 export const app = express(); // Create express app
 
@@ -50,6 +51,7 @@ app.use((req, res, next) => {
 // 2. ROUTE DECLARATIONS
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 // Handling any other undefined routes
 app.all('*', (req, res, next) => {
