@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import slugify from 'slugify';
+import { User } from './userModel.js';
 
 const tourSchema = new Schema(
   {
@@ -100,6 +101,7 @@ const tourSchema = new Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
   {
     toJSON: { virtuals: true },
@@ -116,6 +118,11 @@ tourSchema.virtual('durationWeeks').get(function () {
 tourSchema.pre('save', function () {
   // "this" points to the current document
   this.slug = slugify(this.name, { lower: true });
+});
+
+tourSchema.pre('save', async function () {
+  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
 });
 
 // QUERY MIDDLWARE
