@@ -23,9 +23,10 @@ export const createTour = catchAsync(async (req, res, next) => {
 });
 
 export const getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
+  // BUILD QUERY
   const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
 
+  // EXECUTE QUERY
   const tours = await features.query;
 
   // SEND RESPONSE
