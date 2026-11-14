@@ -1,7 +1,38 @@
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-// getAllDocs, createDoc, getDoc, updateDoc, deleteDoc
+// getAllDocs, getDoc, createDoc, updateDoc, deleteDoc
+
+export const createDoc = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        data: doc,
+      },
+    });
+  });
+
+export const updateDoc = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!doc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: doc,
+      },
+    });
+  });
 
 export const deleteDoc = (Model) =>
   catchAsync(async (req, res, next) => {

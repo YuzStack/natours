@@ -1,7 +1,7 @@
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import { deleteDoc } from './controllerFactory.js';
+import { createDoc, deleteDoc, updateDoc } from './controllerFactory.js';
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -57,17 +57,10 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-export const createUser = async (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
-
-export const getUser = async (req, res) => {
+export const getUser = catchAsync(async (req, res) => {
   const user = await User.findById(req.params.id);
 
-  if (!user) return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
+  if (!user) return next(new AppError('No user found with that ID', 404));
 
   res.status(200).json({
     status: 'success',
@@ -75,13 +68,8 @@ export const getUser = async (req, res) => {
       user,
     },
   });
-};
+});
 
-export const updateUser = async (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
-
+export const createUser = createDoc(User);
+export const updateUser = updateDoc(User); // Do NOT update passwords with this!
 export const deleteUser = deleteDoc(User);

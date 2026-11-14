@@ -2,7 +2,7 @@ import { Tour } from '../models/tourModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import { deleteDoc } from './controllerFactory.js';
+import { createDoc, deleteDoc, updateDoc } from './controllerFactory.js';
 
 export const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -29,23 +29,10 @@ export const getAllTours = catchAsync(async (req, res, next) => {
   });
 });
 
-export const createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-
 export const getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id).populate('reviews');
 
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
+  if (!tour) return next(new AppError('No tour found with that ID', 404));
 
   res.status(200).json({
     status: 'success',
@@ -55,24 +42,8 @@ export const getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-export const updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
+export const createTour = createDoc(Tour);
+export const updateTour = updateDoc(Tour);
 export const deleteTour = deleteDoc(Tour);
 
 export const getTourStats = catchAsync(async (req, res, next) => {

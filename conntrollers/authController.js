@@ -93,7 +93,6 @@ export const protect = catchAsync(async (req, res, next) => {
 
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
-    console.log(roles);
     // roles is an array, e.g., ['admin', 'lead-guide']
     if (!roles.includes(req.user.role))
       return next(new AppError('You do not have persmision to perform this action', 403));
