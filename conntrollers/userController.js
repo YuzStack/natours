@@ -1,6 +1,7 @@
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { deleteDoc } from './controllerFactory.js';
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -56,6 +57,13 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+export const createUser = async (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined!',
+  });
+};
+
 export const getUser = async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -69,13 +77,6 @@ export const getUser = async (req, res) => {
   });
 };
 
-export const createUser = async (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
-
 export const updateUser = async (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -83,9 +84,4 @@ export const updateUser = async (req, res) => {
   });
 };
 
-export const deleteUser = async (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
-  });
-};
+export const deleteUser = deleteDoc(User);

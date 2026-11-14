@@ -3,6 +3,7 @@ import { Tour } from '../models/tourModel.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
+import { deleteDoc } from './controllerFactory.js';
 
 export const getAlTourReviews = catchAsync(async (req, res, next) => {
   const reviews = await Review.find({ tour: req.params.tourId });
@@ -41,7 +42,7 @@ export const createTourReview = catchAsync(async (req, res, next) => {
 });
 
 export const getTourReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findById(req.params.reviewId);
+  const review = await Review.findById(req.params.id);
 
   res.status(200).json({
     status: 'success',
@@ -50,3 +51,5 @@ export const getTourReview = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const deleteTourReview = deleteDoc(Review);
