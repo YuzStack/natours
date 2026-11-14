@@ -29,7 +29,7 @@ userRouter.patch('/change-my-password', protect, updatePassword);
 userRouter.patch('/update-my-account', protect, updateCurUser);
 userRouter.delete('/close-my-account', protect, deleteCurUser);
 
-userRouter.route('/').post(createUser).get(getAllUsers);
+userRouter.route('/').get(getAllUsers).post(createUser);
 userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 export default userRouter;

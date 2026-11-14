@@ -11,17 +11,6 @@ export const aliasTopTours = (req, res, next) => {
   next();
 };
 
-export const createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-
 export const getAllTours = catchAsync(async (req, res, next) => {
   // BUILD QUERY
   const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
@@ -35,6 +24,17 @@ export const getAllTours = catchAsync(async (req, res, next) => {
     results: tours.length,
     data: {
       tours,
+    },
+  });
+});
+
+export const createTour = catchAsync(async (req, res, next) => {
+  const newTour = await Tour.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tour: newTour,
     },
   });
 });

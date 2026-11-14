@@ -51,7 +51,6 @@ app.use((req, res, next) => {
 // 2. ROUTE DECLARATIONS
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
-app.use('/api/v1/reviews', reviewRouter);
 
 // Handling any other undefined routes
 app.all('*', (req, res, next) => {
