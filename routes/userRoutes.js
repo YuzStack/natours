@@ -4,6 +4,7 @@ import {
   deleteCurUser,
   deleteUser,
   getAllUsers,
+  getCurUser,
   getUser,
   updateCurUser,
   updateUser,
@@ -26,7 +27,8 @@ userRouter.post('/forgot-password', forgotPassword);
 userRouter.patch('/reset-password/:token', resetPassword);
 userRouter.patch('/change-my-password', protect, updatePassword);
 
-userRouter.patch('/update-my-account', protect, updateCurUser);
+userRouter.get('/my-account', protect, getCurUser, getUser);
+userRouter.patch('/update-my-account', protect, updateCurUser, getUser);
 userRouter.delete('/close-my-account', protect, deleteCurUser);
 
 userRouter.route('/').get(getAllUsers).post(createUser);
