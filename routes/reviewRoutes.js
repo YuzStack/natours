@@ -11,18 +11,17 @@ import {
 } from '../conntrollers/reviewController.js';
 
 const reviewRouter = Router({ mergeParams: true });
+reviewRouter.use(protect); // Protect all routes that comes after this middleware
 
-// GET or POST: /tour/:tourId/reviews
 reviewRouter
   .route('/')
-  .get(protect, setTourIdFilter, getAlTourReviews)
-  .post(protect, restrictTo('user'), setTourUserIds, createTourReview);
+  .get(setTourIdFilter, getAlTourReviews)
+  .post(restrictTo('user'), setTourUserIds, createTourReview);
 
-// GET: /tour/:tourId/reviews/:reviewId
 reviewRouter
   .route('/:id')
-  .get(protect, getTourReview)
-  .patch(protect, updateTourReview)
-  .delete(protect, deleteTourReview);
+  .get(getTourReview)
+  .patch(restrictTo('user', 'admin'), updateTourReview)
+  .delete(restrictTo('user', 'admin'), deleteTourReview);
 
 export default reviewRouter;
