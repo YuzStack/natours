@@ -1,7 +1,44 @@
+import APIFeatures from '../utils/apiFeatures.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-// getAllDocs, getDoc, createDoc, updateDoc, deleteDoc
+export const getAllDocs = (Model) =>
+  catchAsync(async (req, res, next) => {
+    // BUILD QUERY
+    const features = new APIFeatures(Model.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    // EXECUTE QUERY
+    const docs = await features.query;
+
+    // SEND RESPONSE
+    res.status(200).json({
+      status: 'success', // sucess | fail (400) | error (500)
+      results: docs.length,
+      data: {
+        data: docs,
+      },
+    });
+  });
+
+export const getDoc = (Model, popOpts) =>
+  catchAsync(async (req, res, next) => {
+    let query = Model.findById(req.params.id);
+    if (popOpts) query = query.populate(popOpts);
+
+    const doc = await query;
+    if (!doc) return next(new AppError('No document found with that ID', 404));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: doc,
+      },
+    });
+  });
 
 export const createDoc = (Model) =>
   catchAsync(async (req, res, next) => {

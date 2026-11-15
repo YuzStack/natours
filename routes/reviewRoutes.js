@@ -7,6 +7,7 @@ import {
   deleteTourReview,
   updateTourReview,
   setTourUserIds,
+  setTourIdFilter,
 } from '../conntrollers/reviewController.js';
 
 const reviewRouter = Router({ mergeParams: true });
@@ -14,7 +15,7 @@ const reviewRouter = Router({ mergeParams: true });
 // GET or POST: /tour/:tourId/reviews
 reviewRouter
   .route('/')
-  .get(protect, getAlTourReviews)
+  .get(protect, setTourIdFilter, getAlTourReviews)
   .post(protect, restrictTo('user'), setTourUserIds, createTourReview);
 
 // GET: /tour/:tourId/reviews/:reviewId

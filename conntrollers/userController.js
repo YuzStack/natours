@@ -1,7 +1,7 @@
 import { User } from '../models/userModel.js';
 import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import { createDoc, deleteDoc, updateDoc } from './controllerFactory.js';
+import { createDoc, deleteDoc, getAllDocs, getDoc, updateDoc } from './controllerFactory.js';
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -45,31 +45,8 @@ export const deleteCurUser = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success', // sucess | fail (400) | error (500)
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
-export const getUser = catchAsync(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  if (!user) return next(new AppError('No user found with that ID', 404));
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user,
-    },
-  });
-});
-
+export const getAllUsers = getAllDocs(User);
+export const getUser = getDoc(User);
 export const createUser = createDoc(User);
 export const updateUser = updateDoc(User); // Do NOT update passwords with this!
 export const deleteUser = deleteDoc(User);

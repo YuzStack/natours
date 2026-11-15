@@ -1,47 +1,16 @@
 import { Tour } from '../models/tourModel.js';
-import APIFeatures from '../utils/apiFeatures.js';
-import AppError from '../utils/appError.js';
 import { catchAsync } from '../utils/catchAsync.js';
-import { createDoc, deleteDoc, updateDoc } from './controllerFactory.js';
+import { createDoc, deleteDoc, getAllDocs, getDoc, updateDoc } from './controllerFactory.js';
 
 export const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
-
   next();
 };
 
-export const getAllTours = catchAsync(async (req, res, next) => {
-  // BUILD QUERY
-  const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
-
-  // EXECUTE QUERY
-  const tours = await features.query;
-
-  // SEND RESPONSE
-  res.status(200).json({
-    status: 'success', // sucess | fail (400) | error (500)
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
-
-export const getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-
-  if (!tour) return next(new AppError('No tour found with that ID', 404));
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
+export const getAllTours = getAllDocs(Tour);
+export const getTour = getDoc(Tour, { path: 'reviews' });
 export const createTour = createDoc(Tour);
 export const updateTour = updateDoc(Tour);
 export const deleteTour = deleteDoc(Tour);
