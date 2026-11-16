@@ -34,6 +34,8 @@ const reviewSchema = new Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function () {
   // "this" points to the current query
   // this.populate({ path: 'user', select: 'name photo' });
@@ -58,7 +60,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   if (stats.length > 0)
     await Tour.findByIdAndUpdate(tourId, {
       ratingsQuantity: stats.at(0).numRatings,
-      ratingsAverage: Number(stats.at(0).avgRating.toFixed(1)),
+      ratingsAverage: stats.at(0).avgRating,
     });
   else
     await Tour.findByIdAndUpdate(tourId, {

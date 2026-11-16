@@ -8,6 +8,7 @@ import {
   updateTourReview,
   setTourUserIds,
   setTourIdFilter,
+  checkDuplicateReview,
 } from '../conntrollers/reviewController.js';
 
 const reviewRouter = Router({ mergeParams: true });
@@ -16,7 +17,7 @@ reviewRouter.use(protect); // Protect all routes that comes after this middlewar
 reviewRouter
   .route('/')
   .get(setTourIdFilter, getAlTourReviews)
-  .post(restrictTo('user'), setTourUserIds, createTourReview);
+  .post(restrictTo('user'), setTourUserIds, checkDuplicateReview, createTourReview);
 
 reviewRouter
   .route('/:id')

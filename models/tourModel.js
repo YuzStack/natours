@@ -33,6 +33,7 @@ const tourSchema = new Schema(
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be equal or below 5.0'],
+      set: (val) => Number(val.toFixed(1)),
     },
     ratingsQuantity: {
       type: Number,
@@ -113,8 +114,9 @@ const tourSchema = new Schema(
   }
 );
 
-// tourSchema.index({ price: 1 });
-tourSchema.index({ price: 1, ratingsAverage: -1 });
+// COLLECTION INDEXING
+// tourSchema.index({ price: 1 }); // i.e., Arrange the documents by the price property in ascending (1) order
+tourSchema.index({ price: 1, ratingsAverage: -1 }); // Compound indexing
 tourSchema.index({ slug: 1 });
 
 // VIRTUAL PROPERTY
