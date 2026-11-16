@@ -119,7 +119,7 @@ tourSchema.index({ slug: 1 });
 
 // VIRTUAL PROPERTY
 tourSchema.virtual('durationWeeks').get(function () {
-  return this.duration / 7;
+  return Number((this.duration / 7).toFixed(1));
 });
 
 // VIRTUAL POPULATE
