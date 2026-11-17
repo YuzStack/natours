@@ -105,6 +105,45 @@ export const getToursWithin = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
-    data: { data: tours },
+    data: {
+      data: tours,
+    },
+  });
+});
+
+// e.g., /distances?latlng=34.111745,-118.113491&unit=mi
+export const getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit = 'mi' } = req.query;
+  const [lat, lng] = latlng.split(',').map(Number);
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  if (!lat || !lng)
+    return next(new AppError('Please provide latitude and longitude in the format lag,lng.', 400));
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng, lat],
+        },
+        distanceField: 'distance', // Will be provided in m (meters)
+        distanceMultiplier: multiplier, // Convert to km (kilometers) () or mi (miles)
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
+    },
   });
 });

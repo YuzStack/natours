@@ -4,6 +4,7 @@ import {
   createTour,
   deleteTour,
   getAllTours,
+  getDistances,
   getMonthlyPlan,
   getTour,
   getTourStats,
@@ -22,6 +23,7 @@ tourRouter
   .get(protect, restrictTo('admin', 'lead-guide', 'guide'), getMonthlyPlan);
 
 tourRouter.route('/tours-within').get(getToursWithin); // e.g., /tours-within?distance=233&latlng=-40,45&unit=mi
+tourRouter.route('/distances').get(getDistances); // e.g., /distances?latlng=-40,45&unit=mi
 
 tourRouter.route('/').get(getAllTours).post(protect, restrictTo('admin', 'lead-guide'), createTour);
 tourRouter

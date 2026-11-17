@@ -153,6 +153,9 @@ tourSchema.pre(/^find/, function () {
 
 // AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function () {
+  const firstAggrStage = this.pipeline().at(0);
+  if (firstAggrStage && '$geoNear' in firstAggrStage) return;
+
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
 });
 
