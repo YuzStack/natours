@@ -1,6 +1,8 @@
+import { query } from 'express';
 import { Tour } from '../models/tourModel.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { createDoc, deleteDoc, getAllDocs, getDoc, updateDoc } from './controllerFactory.js';
+import AppError from '../utils/appError.js';
 
 export const aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -83,5 +85,26 @@ export const getMonthlyPlan = catchAsync(async (req, res, next) => {
     data: {
       plan,
     },
+  });
+});
+
+// e.g., /tours-within?distance=233&latlng=34.111745,-118.113491&unit=mi
+export const getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit = 'mi' } = req.query;
+  const [lat, lng] = latlng.split(',').map(Number);
+
+  const radius = unit === 'mi' ? Number(distance) / 3_963.2 : Number(distance) / 6_378.1;
+
+  if (!lat || !lng)
+    return next(new AppError('Please provide latitude and longitude in the format lag,lng.', 400));
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[Number(lng), Number(lat)], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: { data: tours },
   });
 });

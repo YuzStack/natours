@@ -77,7 +77,7 @@ const tourSchema = new Schema(
       default: false,
       select: false,
     },
-    startLocationn: {
+    startLocation: {
       // GeoJSON
       type: {
         type: String,
@@ -118,6 +118,7 @@ const tourSchema = new Schema(
 // tourSchema.index({ price: 1 }); // i.e., Arrange the documents by the price property in ascending (1) order
 tourSchema.index({ price: 1, ratingsAverage: -1 }); // Compound indexing
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 // VIRTUAL PROPERTY
 tourSchema.virtual('durationWeeks').get(function () {
