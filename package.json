@@ -5,11 +5,11 @@
   "license": "ISC",
   "author": "Yusuf Oyinlola",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "node --watch server.js",
-    "build": "NODE_ENV=production node --watch server.js",
-    "debug": "node --inspect server.js"
+    "dev": "node --watch src/server.js",
+    "build": "NODE_ENV=production node --watch src/server.js",
+    "debug": "node --inspect src/server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

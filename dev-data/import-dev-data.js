@@ -1,9 +1,9 @@
-import '../../env.js';
+import '../env.js';
 import mongoose from 'mongoose';
-import fs from 'fs';
-import { Tour } from '../../models/tourModel.js';
-import { User } from '../../models/userModel.js';
-import { Review } from '../../models/reviewModel.js';
+import fs from 'node:fs';
+import { Tour } from '../models/tourModel.js';
+import { User } from '../src/models/userModel.js';
+import { Review } from '../src/models/reviewModel.js';
 
 mongoose.connect(process.env.MONGODB_URI).then((connectionInstance) =>
   console.log(`\n MongoDB connection succesful!
@@ -11,9 +11,9 @@ mongoose.connect(process.env.MONGODB_URI).then((connectionInstance) =>
 );
 
 // READ JSON FILE
-const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours.json', 'utf-8'));
-const users = JSON.parse(fs.readFileSync('./dev-data/data/users.json', 'utf-8'));
-const reviews = JSON.parse(fs.readFileSync('./dev-data/data/reviews.json', 'utf-8'));
+const tours = JSON.parse(fs.readFileSync('./dev-data/tours.json', 'utf-8'));
+const users = JSON.parse(fs.readFileSync('./dev-data/users.json', 'utf-8'));
+const reviews = JSON.parse(fs.readFileSync('./dev-data/reviews.json', 'utf-8'));
 
 // IMPORT DATA INTO THE DATABASE
 const importData = async () => {

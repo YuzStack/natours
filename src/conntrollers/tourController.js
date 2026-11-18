@@ -1,4 +1,3 @@
-import { query } from 'express';
 import { Tour } from '../models/tourModel.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { createDoc, deleteDoc, getAllDocs, getDoc, updateDoc } from './controllerFactory.js';

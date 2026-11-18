@@ -32,7 +32,6 @@ app.use(
     ],
   })
 );
-app.use(express.static('./public')); // Serve static files
 
 const limiter = rateLimit({
   max: 100,
